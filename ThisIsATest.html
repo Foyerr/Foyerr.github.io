@@ -9,21 +9,46 @@
     <h1>Add a Card to Anki Deck</h1>
     <form id="anki-form">
         <label for="deck">Deck Name:</label>
-        <input type="text" id="deck" name="deck" required>
-        <br>
-        <label for="noteType">Note Type:</label>
-        <select id="noteType" name="noteType" required>
-            <!-- Options will be populated here -->
+        <select id="deck" name="deck" required>
+            <!-- Deck options will be populated here -->
         </select>
         <br>
+
+        <label for="noteType">Note Type:</label>
+        <select id="noteType" name="noteType" required>
+            <!-- Note type options will be populated here -->
+        </select>
+        <br>
+
         <div id="fields-container">
-            <!-- Fields will be populated here -->
+            <!-- Dynamic fields will be populated here -->
         </div>
+
         <button type="submit">Add Card</button>
     </form>
-    
+
     <script>
-        // Function to fetch note types and their fields from AnkiConnect
+        // Fetch available decks
+        async function fetchDecks() {
+            const response = await fetch('http://localhost:8765', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'deckNames',
+                    version: 6
+                })
+            });
+            const result = await response.json();
+            if (result.error) {
+                alert(`Error: ${result.error}`);
+                return [];
+            }
+            return result.result; // This is an array of deck names
+        }
+
+        // Fetch available note types
         async function fetchNoteTypes() {
             const response = await fetch('http://localhost:8765', {
                 method: 'POST',
@@ -38,12 +63,12 @@
             const result = await response.json();
             if (result.error) {
                 alert(`Error: ${result.error}`);
-                return [];
+                return {};
             }
             return result.result; // This is a dictionary with model names and IDs
         }
 
-        // Function to fetch model fields
+        // Fetch model fields
         async function fetchModelFields(modelName) {
             const response = await fetch('http://localhost:8765', {
                 method: 'POST',
@@ -66,7 +91,21 @@
             return result.result; // This is an array of field names
         }
 
-        // Populate note types in the select element
+        // Populate decks dropdown
+        async function populateDecks() {
+            const decks = await fetchDecks();
+            const deckSelect = document.getElementById('deck');
+            deckSelect.innerHTML = ''; // Clear existing options
+
+            decks.forEach(deck => {
+                const option = document.createElement('option');
+                option.value = deck;
+                option.textContent = deck;
+                deckSelect.appendChild(option);
+            });
+        }
+
+        // Populate note types dropdown
         async function populateNoteTypes() {
             const noteTypes = await fetchNoteTypes();
             const noteTypeSelect = document.getElementById('noteType');
@@ -160,7 +199,13 @@
         });
 
         // Initialize the form on page load
-        populateNoteTypes();
+        document.addEventListener('DOMContentLoaded', function() {
+            populateDecks();
+            populateNoteTypes();
+        });
+
+        // Update fields when the note type changes
+        document.getElementById('noteType').addEventListener('change', populateFields);
     </script>
 </body>
 </html>
