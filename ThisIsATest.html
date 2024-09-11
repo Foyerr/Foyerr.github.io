@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Card to Anki</title>
+</head>
+<body>
+    <h1>Add a Card to Anki Deck</h1>
+    <form id="anki-form">
+        <label for="deck">Deck Name:</label>
+        <input type="text" id="deck" name="deck" required>
+        <br>
+        <label for="front">Front:</label>
+        <input type="text" id="front" name="front" required>
+        <br>
+        <label for="back">Back:</label>
+        <input type="text" id="back" name="back" required>
+        <br>
+        <button type="submit">Add Card</button>
+    </form>
+    <script>
+        document.getElementById('anki-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+
+            const deck = document.getElementById('deck').value;
+            const front = document.getElementById('front').value;
+            const back = document.getElementById('back').value;
+
+            // Create the card data
+            const cardData = {
+                deckName: deck,
+                modelName: "Basic",
+                fields: {
+                    Front: front,
+                    Back: back
+                },
+                tags: [],
+                options: {
+                    allowDuplicate: false
+                }
+            };
+
+            // Function to add the card to Anki
+            async function addCardToAnki() {
+                const response = await fetch('http://localhost:8765', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'addNote',
+                        version: 6,
+                        params: {
+                            note: cardData
+                        }
+                    })
+                });
+
+                const result = await response.json();
+                if (result.error) {
+                    alert(`Error: ${result.error}`);
+                } else {
+                    alert('Card added successfully!');
+                }
+            }
+
+            addCardToAnki();
+        });
+    </script>
+</body>
+</html>
