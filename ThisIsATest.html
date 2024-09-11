@@ -11,30 +11,121 @@
         <label for="deck">Deck Name:</label>
         <input type="text" id="deck" name="deck" required>
         <br>
-        <label for="front">Front:</label>
-        <input type="text" id="front" name="front" required>
+        <label for="noteType">Note Type:</label>
+        <select id="noteType" name="noteType" required>
+            <!-- Options will be populated here -->
+        </select>
         <br>
-        <label for="back">Back:</label>
-        <input type="text" id="back" name="back" required>
-        <br>
+        <div id="fields-container">
+            <!-- Fields will be populated here -->
+        </div>
         <button type="submit">Add Card</button>
     </form>
+    
     <script>
+        // Function to fetch note types and their fields from AnkiConnect
+        async function fetchNoteTypes() {
+            const response = await fetch('http://localhost:8765', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'modelNamesAndIds',
+                    version: 6
+                })
+            });
+            const result = await response.json();
+            if (result.error) {
+                alert(`Error: ${result.error}`);
+                return [];
+            }
+            return result.result; // This is a dictionary with model names and IDs
+        }
+
+        // Function to fetch model fields
+        async function fetchModelFields(modelName) {
+            const response = await fetch('http://localhost:8765', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'modelFieldNames',
+                    version: 6,
+                    params: {
+                        modelName: modelName
+                    }
+                })
+            });
+            const result = await response.json();
+            if (result.error) {
+                alert(`Error: ${result.error}`);
+                return [];
+            }
+            return result.result; // This is an array of field names
+        }
+
+        // Populate note types in the select element
+        async function populateNoteTypes() {
+            const noteTypes = await fetchNoteTypes();
+            const noteTypeSelect = document.getElementById('noteType');
+            noteTypeSelect.innerHTML = ''; // Clear existing options
+
+            for (const [name, id] of Object.entries(noteTypes)) {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                noteTypeSelect.appendChild(option);
+            }
+
+            // Populate fields for the default selected note type
+            populateFields();
+        }
+
+        // Populate fields based on selected note type
+        async function populateFields() {
+            const noteTypeSelect = document.getElementById('noteType');
+            const selectedNoteType = noteTypeSelect.value;
+
+            if (selectedNoteType) {
+                const fields = await fetchModelFields(selectedNoteType);
+                const fieldsContainer = document.getElementById('fields-container');
+                fieldsContainer.innerHTML = ''; // Clear existing fields
+
+                fields.forEach(field => {
+                    const label = document.createElement('label');
+                    label.textContent = `${field}:`;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = field;
+                    input.name = field;
+                    input.required = true;
+
+                    fieldsContainer.appendChild(label);
+                    fieldsContainer.appendChild(input);
+                    fieldsContainer.appendChild(document.createElement('br'));
+                });
+            }
+        }
+
+        // Handle form submission to add a card
         document.getElementById('anki-form').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent the form from submitting normally
 
             const deck = document.getElementById('deck').value;
-            const front = document.getElementById('front').value;
-            const back = document.getElementById('back').value;
+            const noteType = document.getElementById('noteType').value;
+            const fields = Array.from(document.querySelectorAll('#fields-container input')).reduce((acc, input) => {
+                acc[input.name] = input.value;
+                return acc;
+            }, {});
 
             // Create the card data
             const cardData = {
                 deckName: deck,
-                modelName: "Basic",
-                fields: {
-                    Front: front,
-                    Back: back
-                },
+                modelName: noteType,
+                fields: fields,
                 tags: [],
                 options: {
                     allowDuplicate: false
@@ -67,6 +158,9 @@
 
             addCardToAnki();
         });
+
+        // Initialize the form on page load
+        populateNoteTypes();
     </script>
 </body>
 </html>
