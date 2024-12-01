@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Card to Anki</title>
+</head>
+<body>
+    <h1>Add a Card to Anki Deck</h1>
+    <form id="anki-form">
+        <label for="deck">Deck Name:</label>
+        <select id="deck" name="deck" required>
+            <!-- Deck options will be populated here -->
+        </select>
+        <br>
+
+        <label for="noteType">Note Type:</label>
+        <select id="noteType" name="noteType" required>
+            <!-- Note type options will be populated here -->
+        </select>
+        <br>
+
+        <div id="fields-container">
+            <!-- Dynamic fields will be populated here -->
+        </div>
+
+        <button type="submit">Add Card</button>
+    </form>
+
+    <script>
+        // Fetch available decks
+        async function fetchDecks() {
+            const response = await fetch('http://localhost:8765', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'deckNames',
+                    version: 6
+                })
+            });
+            const result = await response.json();
+            if (result.error) {
+                alert(`Error: ${result.error}`);
+                return [];
+            }
+            return result.result; // This is an array of deck names
+        }
+
+        // Fetch available note types
+        async function fetchNoteTypes() {
+            const response = await fetch('http://localhost:8765', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'modelNamesAndIds',
+                    version: 6
+                })
+            });
+            const result = await response.json();
+            if (result.error) {
+                alert(`Error: ${result.error}`);
+                return {};
+            }
+            return result.result; // This is a dictionary with model names and IDs
+        }
+
+        // Fetch model fields
+        async function fetchModelFields(modelName) {
+            const response = await fetch('http://localhost:8765', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'modelFieldNames',
+                    version: 6,
+                    params: {
+                        modelName: modelName
+                    }
+                })
+            });
+            const result = await response.json();
+            if (result.error) {
+                alert(`Error: ${result.error}`);
+                return [];
+            }
+            return result.result; // This is an array of field names
+        }
+
+        // Populate decks dropdown
+        async function populateDecks() {
+            const decks = await fetchDecks();
+            const deckSelect = document.getElementById('deck');
+            deckSelect.innerHTML = ''; // Clear existing options
+
+            decks.forEach(deck => {
+                const option = document.createElement('option');
+                option.value = deck;
+                option.textContent = deck;
+                deckSelect.appendChild(option);
+            });
+        }
+
+        // Populate note types dropdown
+        async function populateNoteTypes() {
+            const noteTypes = await fetchNoteTypes();
+            const noteTypeSelect = document.getElementById('noteType');
+            noteTypeSelect.innerHTML = ''; // Clear existing options
+
+            for (const [name, id] of Object.entries(noteTypes)) {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                noteTypeSelect.appendChild(option);
+            }
+
+            // Populate fields for the default selected note type
+            populateFields();
+        }
+
+        // Populate fields based on selected note type
+        async function populateFields() {
+            const noteTypeSelect = document.getElementById('noteType');
+            const selectedNoteType = noteTypeSelect.value;
+
+            if (selectedNoteType) {
+                const fields = await fetchModelFields(selectedNoteType);
+                const fieldsContainer = document.getElementById('fields-container');
+                fieldsContainer.innerHTML = ''; // Clear existing fields
+
+                fields.forEach(field => {
+                    const label = document.createElement('label');
+                    label.textContent = `${field}:`;
+                    
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = field;
+                    input.name = field;
+
+                    fieldsContainer.appendChild(label);
+                    fieldsContainer.appendChild(input);
+                    fieldsContainer.appendChild(document.createElement('br'));
+                });
+            }
+        }
+
+        // Handle form submission to add a card
+        document.getElementById('anki-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+
+            const deck = document.getElementById('deck').value;
+            const noteType = document.getElementById('noteType').value;
+            const fields = Array.from(document.querySelectorAll('#fields-container input')).reduce((acc, input) => {
+                acc[input.name] = input.value;
+                return acc;
+            }, {});
+
+            // Create the card data
+            const cardData = {
+                deckName: deck,
+                modelName: noteType,
+                fields: fields,
+                tags: [],
+                options: {
+                    allowDuplicate: false
+                }
+            };
+
+            // Function to add the card to Anki
+            async function addCardToAnki() {
+                const response = await fetch('http://localhost:8765', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'addNote',
+                        version: 6,
+                        params: {
+                            note: cardData
+                        }
+                    })
+                });
+
+                const result = await response.json();
+                if (result.error) {
+                    alert(`Error: ${result.error}`);
+                } else {
+                    alert('Card added successfully!');
+                }
+            }
+
+            addCardToAnki();
+        });
+
+        // Initialize the form on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            populateDecks();
+            populateNoteTypes();
+        });
+
+        // Update fields when the note type changes
+        document.getElementById('noteType').addEventListener('change', populateFields);
+    </script>
+</body>
+</html>
