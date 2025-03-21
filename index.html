@@ -1,67 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Foyerr's Webpage</title>
-	<link rel="stylesheet" type="text/css" href="./style.css">
-	<link rel="icon" type="image/x-icon" href="./favicon.ico">
-	<meta name="description" content="Introduction">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>My Personal Site</title>
+  <!-- Google Font for a modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet" />
+  <style>
+    /* Core color palette */
+    :root {
+      --core-yellow: #f7c843;
+      --dark: #333333;
+      --white: #ffffff;
+      --background: #f9f9f9;
+    }
 
+    /* Reset and global styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--background);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* Container layout using flex for sidebar and content */
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar styling */
+    .sidebar {
+      background-color: var(--core-yellow);
+      width: 250px;
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--dark);
+      margin-bottom: 1rem;
+    }
+    .sidebar h1 {
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .sidebar-nav ul {
+      list-style: none;
+      width: 100%;
+    }
+    .sidebar-nav li {
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .sidebar-nav a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      transition: background-color 0.3s, color 0.3s;
+      padding: 0.5rem 1rem;
+      display: block;
+      border-radius: 4px;
+    }
+    .sidebar-nav a:hover {
+      background-color: var(--dark);
+      color: var(--core-yellow);
+    }
+
+    /* Main content area styling */
+    .content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+    section {
+      margin-bottom: 3rem;
+    }
+    section h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--core-yellow);
+      display: inline-block;
+      padding-bottom: 0.25rem;
+    }
+    section p {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Cards layout for Interests section */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    .card {
+      background: var(--white);
+      border: 1px solid var(--core-yellow);
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    /* Footer styling */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: var(--core-yellow);
+      color: var(--dark);
+    }
+  </style>
 </head>
-
 <body>
-	<main>
-		
-		<article>
-			<h2 id="introduction">Introduction</h2>
-			<p>I am a serial yapper, this is my yap page.</p>
-			<hr>
-
-
-			<ul id="iconmenu">
-				<li><a href="./HTB-Writeups.html"><img src="https://www.hackthebox.com/images/landingv3/favicon.png">  </a></li>
-				<li><a href="https://github.com/Foyerr"><img src="https://github.com/fluidicon.png">  </a></li>
-
-				
-			</ul>
-			<hr>
-
-			<!-- List of all post -->
-			<h2 id="posts">Posts</h2>
-
-			<ul>
-				<li>
-					<time datetime="2024-12-01T12:04:07-05:00">24 Dec 01</time> 
-					[Blog]
-					<a href="posts/2024-12-01 - I'm not sure I will ever be happy.html">I'm not sure I will ever be happy</a>
-				</li>
-			</ul>
-
-			<ul>
-				<li>
-					<time datetime="2023-02-22T12:04:07-05:00">23 Feb 22</time> 
-					[HTB]
-					<a href="posts/HTBWriteups/2023-02-22 - Example.html">Example</a>
-				</li>
-			</ul>
-
-
-			<ul>
-				<li>
-					<time datetime="2023-02-22T12:04:07-05:00">23 Feb 22</time> 
-					[Blog]
-					<a href="posts/2023-02-22 - Example.html">Example</a>
-				</li>
-			</ul>
-
-
-			<br clear="both">
-		</article>
-	</main>
-
-
+  <div class="container">
+    <!-- Sidebar with profile and navigation -->
+    <aside class="sidebar">
+      <!-- Replace with your actual profile image path -->
+      <img src="./pfp.jpg" alt="Profile Picture" class="profile-pic" />
+      <h1>Foyerr</h1>
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#interests">Interests</a></li>
+          <li><a href="#blog">Blog</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <!-- Main content area -->
+    <main class="content">
+      <!-- About Section -->
+      <section id="about">
+        <h2>About Me</h2>
+        <p>
+          I'm a programmer passionate about efficient learning, language, cybersecurity, and personal growth.
+          I strive to master new skills through innovation and dedication.
+        </p>
+      </section>
+      <!-- Interests Section -->
+      <section id="interests">
+        <h2>Interests</h2>
+        <div class="cards">
+          <div class="card">
+            <h3>Spaced Repetition</h3>
+            <p>Discover the power of Anki and spaced repetition systems for long-term retention.</p>
+          </div>
+          <div class="card">
+            <h3>Language Learning</h3>
+            <p>Explore language learning resources, cultural insights, and immersive experiences.</p>
+          </div>
+          <div class="card">
+            <h3>Cybersecurity</h3>
+            <p>Delve into HackTheBox challenges, security research, and vulnerability insights.</p>
+          </div>
+        </div>
+      </section>
+      <!-- Blog Section -->
+      <section id="blog">
+        <h2>Blog</h2>
+        <p>
+          Welcome to my blog, where I share reflections on my mental state, personal growth, and the journey of self-improvement.
+          Stay tuned for updates.
+        </p>
+      </section>      
+    </main>
+  </div>
 </body>
-
 </html>

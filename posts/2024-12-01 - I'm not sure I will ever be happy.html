@@ -1,42 +1,153 @@
 <!DOCTYPE html>
-
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Foyerr's Webpage</title>
-    <link rel="stylesheet" type="text/css" href="../style.css">
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
-    <meta name="description" content="Introduction">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>I’m not sure I will ever be happy - Foyerr's Webpage</title>
+  <meta name="description" content="A brief description of the post">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Font for a modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+    /* Core color palette */
+    :root {
+      --core-yellow: #f7c843;
+      --dark: #333333;
+      --white: #ffffff;
+      --background: #f9f9f9;
+    }
 
-    <meta name="description" content="A breif description of the post">
+    /* Reset and global styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--background);
+      color: var(--dark);
+      line-height: 1.6;
+    }
 
+    /* Container layout */
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar styling */
+    .sidebar {
+      background-color: var(--core-yellow);
+      width: 250px;
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--dark);
+      margin-bottom: 1rem;
+    }
+    .sidebar h1 {
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .sidebar-nav ul {
+      list-style: none;
+      width: 100%;
+    }
+    .sidebar-nav li {
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .sidebar-nav a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 600;
+      transition: background-color 0.3s, color 0.3s;
+      padding: 0.5rem 1rem;
+      display: block;
+      border-radius: 4px;
+    }
+    .sidebar-nav a:hover {
+      background-color: var(--dark);
+      color: var(--core-yellow);
+    }
+
+    /* Main content styling */
+    .content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+    .blog-post {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: var(--white);
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .blog-post h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--core-yellow);
+    }
+    .blog-post .post-date {
+      font-size: 0.9rem;
+      color: #666666;
+      margin-bottom: 1.5rem;
+    }
+    .blog-post p {
+      margin-bottom: 1rem;
+    }
+
+    /* Footer styling */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: var(--core-yellow);
+      color: var(--dark);
+      margin-top: 2rem;
+    }
+  </style>
 </head>
-
 <body>
-    <main>
-        <a href="../index.html">
-            <header>
-                <h1> I’m not sure I will ever be happy </h1>
-            </header>
-        </a>
-        
-
-        <article>
-            
-            <p>Not in a bleak sense, but in the way that there's always room for improvement. There is always a better paying job, a better physique, a bigger house, nicer car. We are all chasing a dream that is ever moving, but that doesn’t mean we shouldn’t chase the dream. We should all strive to be our best and when we find ourselves stagnating we should take a step back and analyze what we are doing and why we are not making progress.</p>
-            <p>It's important to recognize that the pursuit of happiness is less about reaching a final destination and more about the journey itself. Happiness is often misconstrued as the end goal, but in reality it is a fleeting emotion, a state of being that we experience moment to moment. These moments are born out of progress, connection, creativity, and  in my experience, the struggle to overcome a challenge.</p>
-            <p>Chasing improvement, striving for more, is a natural and human nature. It keeps us on our toes and motivated; alive with purpose. The danger however lies in forgetting to appreciate the progress we've made along the way. I often look in the mirror and fixate on where I am weak my chest, forearms, and legs come to mind. But I don't often remind myself how far I’ve come from where I started.</p>
-            <p>Progress often isn't linear. I think there are seasons for growth and seasons for reflection. If we feel stagnant, it may not be because we’re failing but because we’ve reached a plateau where rest or reassessment is needed. Sometimes, that stagnation is telling us to pivot, to find a new passion, or even just to adjust our goals to align with evolving ourselves. </p>
-            <p>**Progress doesn’t have to mean constant upward motion, it can also mean deepening, enriching, or refining what already exists.**</p>
-            <p>There’s also a fundamental truth: chasing "better" can be exhausting if it’s fueled by comparison rather than intrinsic motivation. The "better paying job," "better body", "bigger house" are external markers of success. While they have their place, they’re not the only measures of success and fulfillment. True contentment often comes from inside, how aligned we feel with our values, how connected we are to the people we care about, and how much joy we find in the small, everyday moments.</p>
-            <p>This isn’t a call to settle or lower your standards. Striving for excellence is a worthy pursuit. But we must pair that ambition with self-compassion. It’s okay to fall short sometimes. it’s okay to change your mind about what you want. Growth is not just about achieving it’s about learning, adapting, and, ultimately, living.</p>
-            <p>If happiness is elusive, perhaps it’s because we’re looking for it in the wrong places. Perhaps happiness isn’t a destination but a fleeting satisfaction we glimpse when we pause and appreciate the climb.</p>
-
-        </article>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <!-- Replace with your actual profile image path -->
+        <img src="./pfp.jpg" alt="Profile Picture" class="profile-pic" />
+        <h1>Foyerr</h1>
+        <nav class="sidebar-nav">
+          <ul>
+            <li><a href="./index.html#about">About</a></li>
+            <li><a href="./index.html#interests">Interests</a></li>
+            <li><a href="./index.html#blog">Blog</a></li>
+          </ul>
+        </nav>
+      </aside>
+    <!-- Main content area for the blog post -->
+    <main class="content">
+      <article class="blog-post">
+        <h1>I’m not sure I will ever be happy</h1>
+        <p class="post-date">Published : December 2024</p>
+        <p>Not in a bleak sense, but in the way that there's always room for improvement. There is always a better paying job, a better physique, a bigger house, a nicer car. We are all chasing a dream that is ever moving, but that doesn’t mean we shouldn’t chase the dream. We should all strive to be our best and when we find ourselves stagnating we should take a step back and analyze what we are doing and why we are not making progress.</p>
+        <p>It's important to recognize that the pursuit of happiness is less about reaching a final destination and more about the journey itself. Happiness is often misconstrued as the end goal, but in reality it is a fleeting emotion, a state of being that we experience moment to moment. These moments are born out of progress, connection, creativity, and in my experience, the struggle to overcome a challenge.</p>
+        <p>Chasing improvement, striving for more, is a natural and human nature. It keeps us on our toes and motivated; alive with purpose. The danger however lies in forgetting to appreciate the progress we've made along the way. I often look in the mirror and fixate on where I am weak—my chest, forearms, and legs come to mind. But I don't often remind myself how far I’ve come from where I started.</p>
+        <p>Progress often isn't linear. I think there are seasons for growth and seasons for reflection. If we feel stagnant, it may not be because we’re failing but because we’ve reached a plateau where rest or reassessment is needed. Sometimes, that stagnation is telling us to pivot, to find a new passion, or even just to adjust our goals to align with our evolving selves.</p>
+        <p><strong>Progress doesn’t have to mean constant upward motion, it can also mean deepening, enriching, or refining what already exists.</strong></p>
+        <p>There’s also a fundamental truth: chasing "better" can be exhausting if it’s fueled by comparison rather than intrinsic motivation. The "better paying job," "better body," "bigger house" are external markers of success. While they have their place, they’re not the only measures of success and fulfillment. True contentment often comes from inside, how aligned we feel with our values, how connected we are to the people we care about, and how much joy we find in the small, everyday moments.</p>
+        <p>This isn’t a call to settle or lower your standards. Striving for excellence is a worthy pursuit. But we must pair that ambition with self-compassion. It’s okay to fall short sometimes. It’s okay to change your mind about what you want. Growth is not just about achieving—it’s about learning, adapting, and, ultimately, living.</p>
+        <p>If happiness is elusive, perhaps it’s because we’re looking for it in the wrong places. Perhaps happiness isn’t a destination but a fleeting satisfaction we glimpse when we pause and appreciate the climb.</p>
+      </article>
+      
     </main>
+  </div>
 </body>
-
 </html>
-
-
