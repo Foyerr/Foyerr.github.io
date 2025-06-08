@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSRS Parameter Analyzer</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #f4f7f9;
+            --card-background: #ffffff;
+            --text-color: #34495e;
+            --border-color: #e0e5ea;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.1em;
+            color: #555;
+        }
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', Courier, monospace;
+            resize: vertical;
+        }
+        button {
+            padding: 12px 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: white;
+            background-color: var(--secondary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .param-card {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .param-card h2 {
+            margin-top: 0;
+            font-size: 1.2em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .param-card h2 a {
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+        .param-card h2 a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        .param-card p {
+            margin: 5px 0;
+        }
+        .param-card .values {
+            margin-bottom: 15px;
+        }
+        .param-card .user-value {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        .param-card .default-value {
+            font-weight: normal;
+            color: #7f8c8d;
+        }
+        .param-card .explanation {
+            flex-grow: 1;
+            font-size: 0.95em;
+        }
+        .error-message {
+            color: #e74c3c;
+            font-weight: bold;
+            text-align: center;
+        }
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border-color);
+            color: #555;
+            font-size: 0.9em;
+        }
+        footer h3 {
+            color: var(--primary-color);
+        }
+        footer ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        footer li {
+            margin-bottom: 10px;
+        }
+        footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>FSRS Parameter Analyzer</h1>
+            <p>Paste your 21 parameters from Anki to get a personalized explanation of what each one means for your memory.</p>
+        </header>
+
+        <div class="input-area">
+            <label for="paramsInput"><b>Enter your FSRS parameters below (comma-separated):</b></label>
+            <textarea id="paramsInput" placeholder="e.g., 0.21, 1.29, 2.30, 8.30, ..."></textarea>
+            <button id="analyzeButton">Analyze My Parameters</button>
+        </div>
+
+        <div id="results-container">
+            <!-- Analysis results will be inserted here -->
+        </div>
+
+        <footer>
+            <h3>Official Resources</h3>
+            <p>The explanations on this page are based on information from the FSRS implementation. For a more technical information, please visit:</p>
+            <ul>
+                <li><a href="https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm" target="_blank" rel="noopener noreferrer">The FSRS Algorithm Guide</a> - A detailed technical explanation of the formulas.</li>
+                <li><a href="https://github.com/open-spaced-repetition/fsrs4anki/wiki" target="_blank" rel="noopener noreferrer">The FSRS4Anki Wiki</a> - Practical guides and user-facing documentation.</li>
+            </ul>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        
+            const DOCS_BASE_URL = "https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm";
+
+            // UPDATE DEFAULTS HERE: Simply change the numbers in this string.
+            const DEFAULT_PARAMS_STRING = "0.2172, 1.1771, 3.2602, 16.1507, 7.0114, 0.57, 2.0966, 0.0069, 1.5261, 0.112, 1.0178, 1.849, 0.1133, 0.3127, 2.2934, 0.2191, 3.0004, 0.7536, 0.3332, 0.1437, 0.2";
+            const DEFAULT_PARAM_VALUES = DEFAULT_PARAMS_STRING.split(',').map(p => parseFloat(p.trim()));
+
+            const FSRS_PARAM_INFO = [
+                { name: "w[0]", title: "Initial 'Again' Stability", explanation: "The starting stability (in days) when you press 'Again' on a brand new card. A low value means the card will be shown again very soon.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[1]", title: "Initial 'Hard' Stability", explanation: "The starting stability when you press 'Hard' on a new card. This sets the initial memory strength for difficult material.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[2]", title: "Initial 'Good' Stability", explanation: "The starting stability when you press 'Good' on a new card. This is the baseline for a successfully learned card.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[3]", title: "Initial 'Easy' Stability", explanation: "The starting stability when you press 'Easy' on a new card. A high value means the algorithm trusts your 'Easy' ratings and will schedule the card far out.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[4]", title: "Initial Difficulty (Base)", explanation: "This is a component of the card's initial 'Difficulty' value (D). A higher value here contributes to an overall higher initial difficulty for all new cards.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[5]", title: "Initial Difficulty (Multiplier)", explanation: "This parameter scales the initial difficulty based on your rating. It determines how much easier an 'Easy' card is rated compared to a 'Hard' one.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[6]", title: "Difficulty Change", explanation: "Controls how much a card's difficulty value changes after each review. A lower value means difficulty is more 'stable' and changes less with each rating.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[7]", title: "Difficulty Mean Reversion", explanation: "This controls how much a card's difficulty tends to move back towards a 'standard' difficulty. A higher value means stronger mean reversion.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[8]", title: "Stability Growth (Base)", explanation: "The base factor for how much stability increases after a successful review. This is a core component of the memory model's exponential growth.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[9]", title: "Stability Growth (Difficulty Penalty)", explanation: "How much a card's difficulty (D) penalizes the growth of its stability. Higher difficulty cards will have their stability increase by a smaller amount.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[10]", title: "Stability Growth (Retrievability Bonus)", explanation: "How much the memory's retrievability (R, or recall probability) at the time of review affects the stability increase. Reviewing a card just before you forget it (low R) gives a larger stability boost.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[11]", title: "Stability After Lapse (Base)", explanation: "The base factor for calculating a card's new, lower stability after you forget it (press 'Again').", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[12]", title: "Stability After Lapse (Difficulty Penalty)", explanation: "How much a card's difficulty (D) affects its new stability after a lapse. Higher difficulty cards will have their post-lapse stability reduced more.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[13]", title: "Stability After Lapse (Prior Stability Bonus)", explanation: "Determines how much the card's old, pre-lapse stability influences its new stability. A higher value means more of the old stability is retained.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[14]", title: "Stability After Lapse (Retrievability Penalty)", explanation: "How much the retrievability (R) at the time of failure affects the new stability. Forgetting a card that was supposed to be easy to remember (high R) results in a greater stability loss.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[15]", title: "'Hard' Penalty on Recall", explanation: "A penalty applied to the stability increase when you successfully recall a card but rate it 'Hard'. It reduces the next interval compared to a 'Good' rating.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[16]", title: "'Easy' Bonus on Recall", explanation: "A bonus multiplier applied to the stability increase when you successfully recall a card and rate it 'Easy', leading to a much longer next interval.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[17]", title: "Short-Term Stability (Base)", explanation: "This parameter, along with the next two, handles reviews that happen on the same day (interval = 0), such as during learning or cramming.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[18]", title: "Short-Term Stability (Rating Offset)", explanation: "Works with the base short-term stability to adjust the memory state based on the rating given during a same-day review.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[19]", title: "Short-Term Stability (Power)", explanation: "The power component for the short-term stability calculation, fine-tuning how stability changes for very short intervals.", docLink: `${DOCS_BASE_URL}#memory-state` },
+                { name: "w[20]", title: "Forgetting Curve Decay", explanation: "This single, crucial parameter defines the shape of your personal forgetting curve. It determines how quickly the probability of recalling a memory decreases over time.", docLink: `${DOCS_BASE_URL}#forgetting-curve` }
+            ];
+
+            function analyzeParameters() {
+                const inputElement = document.getElementById('paramsInput');
+                const resultsContainer = document.getElementById('results-container');
+                resultsContainer.innerHTML = ''; 
+
+                try {
+                    const paramString = inputElement.value.trim();
+                    if (!paramString) {
+                        throw new Error("Please enter your parameters.");
+                    }
+
+                    const parsedParams = paramString
+                        .split(/[\s,]+/) 
+                        .filter(p => p !== '') 
+                        .map(p => {
+                            const num = parseFloat(p);
+                            if (isNaN(num)) {
+                                throw new Error(`'${p}' is not a valid number.`);
+                            }
+                            return num;
+                        });
+                    
+                    if (parsedParams.length !== 21) {
+                        throw new Error(`Expected 21 parameters, but found ${parsedParams.length}. Please check your input.`);
+                    }
+                    
+                    FSRS_PARAM_INFO.forEach((param, index) => {
+                        const userValue = parsedParams[index];
+                        const defaultValue = DEFAULT_PARAM_VALUES[index];
+                        const cardHTML = `
+                            <div class="param-card">
+                                <h2>
+                                        ${param.name}: ${param.title} 
+                                </h2>
+                                <div class="values">
+                                    <p>Your Value: <span class="user-value">${userValue.toFixed(4)}</span></p>
+                                    <p>Default Value: <span class="default-value">${defaultValue.toFixed(2)}</span></p>
+                                </div>
+                                <p class="explanation">${param.explanation}</p>
+                            </div>
+                        `;
+                        resultsContainer.innerHTML += cardHTML;
+                    });
+
+                } catch (error) {
+                    resultsContainer.innerHTML = `<p class="error-message">Error: ${error.message}</p>`;
+                }
+            }
+
+            document.getElementById('analyzeButton').addEventListener('click', analyzeParameters);
+        });
+    </script>
+</body>
+</html>
